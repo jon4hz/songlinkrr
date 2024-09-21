@@ -8,6 +8,7 @@
 ## ☕ About
 Songlinkrr is a CLI tool to to create shareable links for your currently playing plex songs using subsonic.  
 It searches your active plex sessions for music streams and tries to find matching tracks on subsonic for the songs that are played.  
+If a match was found, songlinkrr creates a link for that song using the subsonic api.  
 That allows you to conveniently share songs with friends and family.
 
 ## 🚀 Installation
