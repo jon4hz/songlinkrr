@@ -1,4 +1,9 @@
 # songlinkrr
+[![Go Report Card](https://goreportcard.com/badge/github.com/jon4hz/songlinkrr)](https://goreportcard.com/report/github.com/jon4hz/songlinkrr)
+[![lint](https://github.com/jon4hz/songlinkrr/actions/workflows/lint.yml/badge.svg)](https://github.com/jon4hz/songlinkrr/actions/workflows/lint.yml)
+[![goreleaser](https://github.com/jon4hz/songlinkrr/actions/workflows/release.yml/badge.svg)](https://github.com/jon4hz/songlinkrr/actions/workflows/release.yml)
+[![Static Badge](https://img.shields.io/badge/%20-%20Media%20Server%20-%20%232b3137?style=flat&logo=plex&labelColor=black)](https://app.plex.tv)
+
 
 ## ☕ About
 Songlinkrr is a CLI tool to to create shareable links for your currently playing plex songs using subsonic.  
