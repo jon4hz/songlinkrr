@@ -109,7 +109,7 @@ func root(cmd *cobra.Command, args []string) {
 		log.Fatal("Failed to authenticate to subsonic", "url", cfg.SubsonicURL, "err", err)
 	}
 
-	searchString := fmt.Sprintf("%s %s", userSession.Title, userSession.GrandparentTitle)
+	searchString := fmt.Sprintf("%s %s", userSession.GrandparentTitle, userSession.Title)
 
 RetrySearch:
 	var searchResult *subsonic.SearchResult3
