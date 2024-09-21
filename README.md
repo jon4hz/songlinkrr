@@ -10,6 +10,9 @@ That allows you to conveniently share songs with friends and family.
 # using go directly
 $ go install github.com/jon4hz/songlinkrr@latest
 
+# from aur (btw)
+$ yay -S songlinkrr-bin
+
 # local pkg manager
 $ export VERSION=v0.1.0
 
