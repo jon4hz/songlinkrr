@@ -42,7 +42,7 @@ First come first serve, if you dont like that, use the `--config` flag to specif
 plex_username: your_plex_user
 plex_token: your_plex_token
 plex_url: https://my.plex.server
-plex_ignore_tls: false
+plex_ignore_tls: true  # in most cases your cert wont be valid.
 subsonic_url: https://my.subsonic.server
 subsonic_user: your_username
 subsonic_password: your_password

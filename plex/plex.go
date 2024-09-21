@@ -20,12 +20,12 @@ type Client struct {
 	token  string
 }
 
-func New(server, token string, timeout int, tlsVerify bool) *Client {
+func New(server, token string, timeout int, ignoreTLS bool) *Client {
 	return &Client{
 		http: &http.Client{
 			Timeout: time.Duration(timeout) * time.Second,
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !tlsVerify},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreTLS},
 			},
 		},
 		server: server,
