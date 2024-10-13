@@ -9,15 +9,23 @@ import (
 	"github.com/spf13/viper"
 )
 
+type PlexConfig struct {
+	Username  string `mapstructure:"username"`
+	Token     string `mapstructure:"token"`
+	URL       string `mapstructure:"url"`
+	IgnoreTLS bool   `mapstructure:"ignore_tls"`
+	Timeout   int    `mapstructure:"timeout"`
+}
+
+type SubsonicConfig struct {
+	URL      string `mapstructure:"url"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+}
+
 type Config struct {
-	PlexUsername     string `mapstructure:"plex_username"`
-	PlexToken        string `mapstructure:"plex_token"`
-	PlexURL          string `mapstructure:"plex_url"`
-	PlexIgnoreTLS    bool   `mapstructure:"plex_ignore_tls"`
-	PlexTimeout      int    `mapstructure:"plex_timeout"`
-	SubsonicURL      string `mapstructure:"subsonic_url"`
-	SubsonicUser     string `mapstructure:"subsonic_user"`
-	SubsonicPassword string `mapstructure:"subsonic_password"`
+	PlexConfig     PlexConfig     `mapstructure:"plex"`
+	SubsonicConfig SubsonicConfig `mapstructure:"subsonic"`
 }
 
 func init() {

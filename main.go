@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,7 +12,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 	"github.com/jon4hz/songlinkrr/config"
-	"github.com/jon4hz/songlinkrr/plex"
+	"github.com/jon4hz/songlinkrr/player"
+	"github.com/jon4hz/songlinkrr/player/plex"
 	"github.com/jon4hz/songlinkrr/version"
 	"github.com/muesli/termenv"
 	"github.com/samber/lo"
@@ -41,75 +43,71 @@ func main() {
 	}
 }
 
-func root(cmd *cobra.Command, args []string) {
+func root(cmd *cobra.Command, _ []string) {
 	lipgloss.SetColorProfile(termenv.TrueColor)
 	cfg, err := config.Load(rootCmdFlags.configFile)
 	if err != nil {
 		log.Fatal("Failed to load config", "err", err)
 	}
 
-	plexClient := plex.New(
-		cfg.PlexURL,
-		cfg.PlexToken,
-		cfg.PlexTimeout,
-		cfg.PlexIgnoreTLS,
-	)
+	if cfg.PlexConfig.Username == "" {
+		log.Fatal("No client configured")
+	}
 
-	var plexSessions *plex.Sessions
+	var client player.Player
+	if cfg.PlexConfig.Username != "" {
+		client = plex.New(&cfg.PlexConfig, cfg.PlexConfig.Username)
+	}
+
+	var sessions []*player.Session
 	if err := spinner.New().
 		Type(spinner.Dots).
 		Title("Fetching Plex sessions").
 		Action(func() {
 			var err error
-			plexSessions, err = plexClient.GetSessions(cmd.Context())
-			if err != nil {
+			sessions, err = client.GetSessions(cmd.Context())
+			if err != nil && errors.Is(err, player.ErrNoSessions) {
+				log.Info(err)
+				return
+			} else if err != nil {
 				log.Fatal("Failed to get Plex sessions", "err", err)
 			}
 		}).Run(); err != nil {
 		log.Fatal("Failed to run spinner", "err", err)
 	}
 
-	if plexSessions.MediaContainer.Size == 0 {
-		log.Info("No active sessions")
-		return
-	}
-
-	userSessions := lo.Filter(plexSessions.MediaContainer.Metadata, func(m plex.Metadata, index int) bool {
-		return m.Type == "track" && m.User.Title == cfg.PlexUsername
-	})
-
-	var userSession plex.Metadata
-	if rootCmdFlags.forceConfirm || len(userSessions) > 1 {
-		if err := huh.NewSelect[plex.Metadata]().
+	var session *player.Session
+	if rootCmdFlags.forceConfirm || len(sessions) > 1 {
+		if err := huh.NewSelect[*player.Session]().
 			Title("Select which song to share from Plex").
-			Options(lo.Map(userSessions, func(m plex.Metadata, index int) huh.Option[plex.Metadata] {
+			Options(lo.Map(sessions, func(s *player.Session, _ int) huh.Option[*player.Session] {
 				return huh.NewOption(
-					fmt.Sprintf("%s • %s (%s %s)", m.GrandparentTitle, m.Title, m.Player.Product, m.Player.Title),
-					m,
+					fmt.Sprintf("%s • %s (%s)", s.Artist, s.Title, s.Player),
+					s,
 				)
 			})...).
-			Value(&userSession).
+			Value(&session).
 			Run(); err != nil {
 			log.Fatal("Failed to run form", "err", err)
 		}
-	} else if len(userSessions) == 1 {
-		userSession = userSessions[0]
+	} else if len(sessions) == 1 {
+		session = sessions[0]
 	} else {
-		log.Fatal("No active music session found on Plex")
+		log.Fatalf("No active music session found on %s", client.String())
 	}
 
 	subsonicClient := &subsonic.Client{
 		Client:     http.DefaultClient,
-		BaseUrl:    cfg.SubsonicURL,
-		User:       cfg.SubsonicUser,
+		BaseUrl:    cfg.SubsonicConfig.URL,
+		User:       cfg.SubsonicConfig.User,
 		ClientName: "songlinkrr-" + version.Version,
 	}
 
-	if err := subsonicClient.Authenticate(cfg.SubsonicPassword); err != nil {
-		log.Fatal("Failed to authenticate to subsonic", "url", cfg.SubsonicURL, "err", err)
+	if err := subsonicClient.Authenticate(cfg.SubsonicConfig.Password); err != nil {
+		log.Fatal("Failed to authenticate to subsonic", "url", cfg.SubsonicConfig.URL, "err", err)
 	}
 
-	searchString := fmt.Sprintf("%s %s", userSession.GrandparentTitle, userSession.Title)
+	searchString := fmt.Sprintf("%s %s", session.Artist, session.Title)
 
 RetrySearch:
 	var searchResult *subsonic.SearchResult3
@@ -142,7 +140,7 @@ RetrySearch:
 	if err := huh.NewSelect[*subsonic.Child]().
 		Title("Select best match from subsonic").
 		Description(fmt.Sprintf("Search: %s", searchString)).
-		Options(lo.Map(searchResult.Song, func(s *subsonic.Child, index int) huh.Option[*subsonic.Child] {
+		Options(lo.Map(searchResult.Song, func(s *subsonic.Child, _ int) huh.Option[*subsonic.Child] {
 			return huh.NewOption(fmt.Sprintf("%s • %s", s.Artist, s.Title), s)
 		})...).
 		Value(&song).

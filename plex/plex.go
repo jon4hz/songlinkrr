@@ -25,7 +25,7 @@ func New(server, token string, timeout int, ignoreTLS bool) *Client {
 		http: &http.Client{
 			Timeout: time.Duration(timeout) * time.Second,
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreTLS},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: ignoreTLS}, // nolint:gosec
 			},
 		},
 		server: server,
