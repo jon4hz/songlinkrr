@@ -1,13 +1,14 @@
 module github.com/jon4hz/songlinkrr
 
 go 1.23.1
+
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1
 	github.com/charmbracelet/huh v0.6.0
 	github.com/charmbracelet/huh/spinner v0.0.0-20240917123815-c9b2c9cdb7b6
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/charmbracelet/log v0.4.0
+	github.com/charmbracelet/log v0.4.1
 	github.com/muesli/termenv v0.16.0
 	github.com/samber/lo v1.49.1
 	github.com/spf13/cobra v1.9.1
