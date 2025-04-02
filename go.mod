@@ -1,7 +1,6 @@
 module github.com/jon4hz/songlinkrr
 
 go 1.23.1
-
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1
@@ -12,7 +11,7 @@ require (
 	github.com/muesli/termenv v0.16.0
 	github.com/samber/lo v1.49.1
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/viper v1.20.0
+	github.com/spf13/viper v1.20.1
 	github.com/supersonic-app/go-subsonic v0.0.0-20240807143145-e2f3f119a139
 )
 
