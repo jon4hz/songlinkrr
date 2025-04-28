@@ -10,7 +10,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/charmbracelet/log v0.4.1
 	github.com/muesli/termenv v0.16.0
-	github.com/samber/lo v1.49.1
+	github.com/samber/lo v1.50.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/supersonic-app/go-subsonic v0.0.0-20240807143145-e2f3f119a139
