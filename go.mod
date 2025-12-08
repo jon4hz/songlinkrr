@@ -11,7 +11,7 @@ require (
 	github.com/charmbracelet/log v0.4.2
 	github.com/muesli/termenv v0.16.0
 	github.com/samber/lo v1.51.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.20.1
 	github.com/supersonic-app/go-subsonic v0.0.0-20240807143145-e2f3f119a139
 )
